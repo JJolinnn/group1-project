@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head><title>首頁</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body{background:linear-gradient(135deg,#A385E2,#F2A3F2,#7E8BE8,#DCE8F4);min-height:100vh;margin:0;}
+    .navbar{background:#A385E2!important;}
+    .card{border:none;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.15);}
+</style>
+</head><body>
+<nav class="navbar navbar-dark"><div class="container-fluid">
+    <span class="navbar-brand">企業請假系統 - 歡迎 {{ name }}</span>
+    <a href="/logout" class="btn btn-outline-light">登出</a>
+</div></nav>
+<div class="container mt-5">
+<div class="row g-4 justify-content-center">
+    <div class="col-md-4"><div class="card text-center h-100">
+        <div class="card-body"><h5 class="text-success">申請請假</h5>
+        <a href="/apply" class="btn btn-success btn-lg">馬上申請</a></div>
+    </div></div>
+    <div class="col-md-4"><div class="card text-center h-100">
+        <div class="card-body"><h5 class="text-info">我的請假紀錄</h5>
+        <a href="/history" class="btn btn-info btn-lg text-white">查看紀錄</a></div>
+    </div></div>
+    {% if session.is_manager %}
+    <div class="col-md-4"><div class="card text-center h-100">
+        <div class="card-body"><h5 class="text-warning">主管審核專區</h5>
+        <a href="/manager" class="btn btn-warning btn-lg">進入審核</a></div>
+    </div></div>
+    {% endif %}
+</div></div>
+</body></html>
