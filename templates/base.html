@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>員工請假系統</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #A385E2;
+            --btn-color: #7E8BE8;
+            --bg-gradient: linear-gradient(135deg, #A385E2, #F2A3F2, #7E8BE8, #DCE8F4);
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --text-main: #4a4a4a;
+            --text-light: #666666;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans TC', sans-serif; }
+        body {
+            background: var(--bg-gradient); background-attachment: fixed;
+            color: var(--text-main); min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        nav {
+            width: 100%; padding: 1rem 5%; background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex;
+            justify-content: space-between; align-items: center; position: fixed; top: 0; z-index: 100;
+        }
+        .brand { font-size: 1.4rem; color: var(--primary); font-weight: 700; letter-spacing: 1px; }
+        .user-info { font-size: 0.95rem; color: var(--text-light); }
+        .logout-btn { 
+            color: var(--text-light); text-decoration: none; font-size: 0.9rem; margin-left: 15px; 
+            padding: 5px 12px; border: 1px solid #ddd; border-radius: 20px; transition: 0.3s; background: white;
+        }
+        .logout-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .container { margin-top: 100px; width: 90%; max-width: 800px; padding-bottom: 50px; animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .glass-card {
+            background: var(--glass-white); padding: 2.5rem; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(163, 133, 226, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        h1, h2 { text-align: center; margin-bottom: 1.5rem; color: #5a4b8a; }
+        .form-group { margin-bottom: 1.2rem; }
+        label { display: block; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 500; }
+        input, select, textarea {
+            width: 100%; padding: 12px; background: #ffffff; border: 2px solid #e0e0e0;
+            border-radius: 12px; color: #333; outline: none; transition: 0.3s; font-size: 1rem;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+        .btn {
+            display: inline-block; width: 100%; padding: 12px; border: none; border-radius: 50px;
+            font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center;
+            text-decoration: none; transition: 0.3s; margin-top: 10px; box-shadow: 0 4px 6px rgba(126, 139, 232, 0.3);
+        }
+        .btn-primary { background: var(--btn-color); color: white; }
+        .btn-primary:hover { background: #6c7ae0; transform: translateY(-2px); }
+        .btn-cancel { background: #e0e0e0; color: #666; }
+        .btn-cancel:hover { background: #d0d0d0; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: 10px; }
+        th { text-align: left; padding: 10px; color: #666; font-weight: 600; }
+        td { padding: 15px 10px; background: white; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+        td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; border-left: 1px solid #eee; }
+        td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-right: 1px solid #eee; }
+        .tag { padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: 500; }
+        .tag-wait { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .tag-ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .tag-no { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .flash-msg { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
+        @media (max-width: 600px) { .container { width: 95%; } }
+    </style>
+</head>
+<body>
+    {% if session.get('username') %}
+    <nav>
+        <div class="brand">員工請假系統</div>
+        <div class="user-info">{{ session['name'] }} {% if session.get('is_manager') %}<span style="color:var(--primary)">(主管)</span>{% endif %} <a href="/logout" class="logout-btn">登出</a></div>
+    </nav>
+    {% endif %}
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}<div class="flash-msg">{{ message }}</div>{% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

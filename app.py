@@ -5,7 +5,6 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'nfu2025_group1'
 
-# 超活潑全站配色
 COLORS = {
     'bg': 'linear-gradient(135deg, #A385E2, #F2A3F2, #7E8BE8, #DCE8F4)',
     'primary': '#A385E2',
@@ -22,6 +21,7 @@ def init_db():
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, name TEXT, 
                   type TEXT, start_date TEXT, end_date TEXT, reason TEXT, 
                   status TEXT DEFAULT '待審核', apply_time TEXT)''')
+    
     members = [
         ('12156208', '蕭譓贏', '123', 0),
         ('12156231', '陳俊翰', '123', 0),
@@ -57,57 +57,78 @@ def login():
 
 @app.route('/index')
 def index():
-    if 'username' not in session:
-        return redirect('/')
+    if 'username' not in session: return redirect('/')
     return render_template('index.html', name=session['name'], colors=COLORS)
 
 @app.route('/apply')
 def apply():
-    if 'username' not in session:
-        return redirect('/')
+    if 'username' not in session: return redirect('/')
     return render_template('apply.html', colors=COLORS)
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    if 'username' not in session:
-        return redirect('/')
+    if 'username' not in session: return redirect('/')
     leave_type = request.form['type']
     status = '已核准' if leave_type == '生理假' else '待審核'
-    
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute("""INSERT INTO leaves 
                  (username, name, type, start_date, end_date, reason, status, apply_time)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-              (session['username'], session['name'],
-               leave_type, request.form['start'], request.form['end'],
-               request.form['reason'], status, datetime.now().strftime('%Y-%m-%d %H:%M')))
+              (session['username'], session['name'], leave_type,
+               request.form['start'], request.form['end'], request.form['reason'],
+               status, datetime.now().strftime('%Y-%m-%d %H:%M')))
     conn.commit()
     conn.close()
-    flash('申請成功！生理假已自動核准～' if leave_type == '生理假' else '申請已送出，等待主管審核')
+    flash('申請成功！' + ('（生理假已自動核准）' if leave_type=='生理假' else '待主管審核'))
     return redirect('/index')
 
 @app.route('/history')
 def history():
-    if 'username' not in session:
-        return redirect('/')
+    if 'username' not in session: return redirect('/')
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute("SELECT * FROM leaves WHERE username=? ORDER BY id DESC", (session['username'],))
     leaves = c.fetchall()
     conn.close()
-    return render_template('history.html', leaves=leaves, colors=COLORS)
+    return render_template('history.html', leaves=leaves, name=session['name'], colors=COLORS)
 
 @app.route('/manager')
 def manager():
-    if not session.get('is_manager'):
-        return redirect('/index')
+    if not session.get('is_manager'): return redirect('/index')
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute("SELECT * FROM leaves WHERE status='待審核' ORDER BY id DESC")
     leaves = c.fetchall()
     conn.close()
-    return render_template('manager.html', leaves=leaves, colors=COLORS)
+    return render_template('manager.html', leaves=leaves, name=session['name'], colors=COLORS)
+
+@app.route('/add_member_page')
+def add_member_page():
+    if not session.get('is_manager'): return redirect('/index')
+    return render_template('add_member.html', colors=COLORS)
+
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    if not session.get('is_manager'): return redirect('/index')
+    
+    new_username = request.form['username']
+    new_name = request.form['name']
+    default_password = '123'
+    
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    try:
+        c.execute("INSERT INTO users (username, name, password, is_manager) VALUES (?, ?, ?, ?)", 
+                  (new_username, new_name, default_password, 0))
+        conn.commit()
+        flash(f'成功新增員工：{new_name} (帳號: {new_username})')
+    except sqlite3.IntegrityError:
+        flash(f'錯誤：帳號 {new_username} 已經存在！')
+    finally:
+        conn.close()
+        
+    return redirect('/index')
 
 @app.route('/approve/<int:lid>')
 def approve(lid):
@@ -138,5 +159,4 @@ def logout():
 
 if __name__ == '__main__':
     init_db()
-if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, host='0.0.0.0', port=5000)

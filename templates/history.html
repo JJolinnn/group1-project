@@ -1,45 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>我的請假紀錄</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body{background:linear-gradient(135deg,#A385E2,#F2A3F2,#7E8BE8,#DCE8F4);min-height:100vh;}
-        .navbar{background:#A385E2!important;}
-    </style>
-</head>
-<body>
-<nav class="navbar navbar-dark">
-    <div class="container-fluid">
-        <span class="navbar-brand">我的請假紀錄 - {{ name }}</span>
-        <a href="/index" class="btn btn-outline-light">回首頁</a>
+{% extends "base.html" %}
+{% block content %}
+<div class="glass-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>我的申請紀錄</h2>
+        <a href="/index" class="btn btn-cancel" style="width: auto; padding: 8px 20px; margin-top: 0;">返回</a>
     </div>
-</nav>
-<div class="container mt-4">
-    {% if leaves %}
-    <table class="table table-striped table-hover bg-white shadow rounded">
-        <thead class="table-primary">
-            <tr><th>類型</th><th>開始日期</th><th>結束日期</th><th>原因</th><th>狀態</th></tr>
-        </thead>
-        <tbody>
-        {% for l in leaves %}
-        <tr>
-            <td>{{ l[3] }}</td>
-            <td>{{ l[4] }}</td>
-            <td>{{ l[5] }}</td>
-            <td>{{ l[6] }}</td>
-            <td>
-                {% if l[7] == '已核准' %}<span class="badge bg-success">已核准</span>
-                {% elif l[7] == '已駁回' %}<span class="badge bg-danger">已駁回</span>
-                {% else %}<span class="badge bg-warning">待審核</span>{% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <div class="text-center mt-5 text-white"><h3>尚無請假紀錄</h3></div>
-    {% endif %}
+    <div style="overflow-x: auto;">
+        <table>
+            <thead><tr><th>申請時間</th><th>假別</th><th>起訖時間</th><th>事由</th><th>狀態</th></tr></thead>
+            <tbody>
+                {% for leave in leaves %}
+                <tr>
+                    <td>{{ leave[8] }}</td><td><span style="color: var(--primary); font-weight:bold;">{{ leave[3] }}</span></td>
+                    <td><div style="font-size: 0.85rem;">{{ leave[4].replace('T', ' ') }}</div><div style="font-size: 0.85rem; color: #888;">至 {{ leave[5].replace('T', ' ') }}</div></td>
+                    <td>{{ leave[6] }}</td>
+                    <td>
+                        {% if leave[7] == '待審核' %}<span class="tag tag-wait">待審核</span>
+                        {% elif leave[7] == '已核准' %}<span class="tag tag-ok">已核准</span>
+                        {% else %}<span class="tag tag-no">已駁回</span>{% endif %}
+                    </td>
+                </tr>
+                {% else %}<tr><td colspan="5" style="text-align: center; padding: 30px; color: #999;">目前沒有任何紀錄</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-</body>
-</html>
+{% endblock %}

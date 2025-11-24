@@ -1,45 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>第一組 企業請假系統</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body{
-            background: linear-gradient(135deg, #A385E2, #F2A3F2, #7E8BE8, #DCE8F4);
-            height:100vh;display:flex;align-items:center;justify-content:center;margin:0;
-        }
-        .card{width:430px;border:none;border-radius:20px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.2);}
-        .card-header{background:#A385E2;color:white;font-size:1.4rem;}
-        .btn-primary{background:#7E8BE8;border:none;}
-        .btn-primary:hover{background:#6a78d1;}
-        .test-box{background:rgba(255,255,255,0.92);border-radius:12px;padding:14px;margin-top:20px;font-size:13.5px;}
-    </style>
-</head>
-<body>
-<div class="card">
-    <div class="card-header text-center">
-        <h3 class="mb-0">第一組 企業請假系統</h3>
-    </div>
-    <div class="card-body bg-white">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}<div class="alert alert-danger">{{ messages[0] }}</div>{% endif %}
-        {% endwith %}
-        <form method="POST" action="/login">
-            <div class="mb-3">
-                <input type="text" name="username" class="form-control form-control-lg" placeholder="請輸入帳號" required>
-            </div>
-            <div class="mb-3">
-                <input type="password" name="password" class="form-control form-control-lg" placeholder="請輸入密碼" required>
-            </div>
-            <button class="btn btn-primary w-100 btn-lg">登入系統</button>
-        </form>
-
-        <div class="test-box text-muted">
-            <strong>預設員工帳號為學號　密碼為 123</strong><br>
-            12156208　12156231　12156234　12156252　12156254<br>
-            <strong>主管帳號：</strong> admin　<strong>密碼：</strong> admin
+{% extends "base.html" %}
+{% block content %}
+<div class="glass-card" style="max-width: 450px; margin: 60px auto; text-align: center;">
+    
+    <h1 style="color: var(--primary); margin-bottom: 30px; font-size: 2rem;">員工請假系統</h1>
+    
+    <form action="/login" method="post" style="text-align: left;">
+        <div class="form-group">
+            <label>帳號</label>
+            <input type="text" name="username" required placeholder="請輸入學號">
         </div>
+        <div class="form-group">
+            <label>密碼</label>
+            <input type="password" name="password" required placeholder="請輸入密碼">
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 15px;">登入系統</button>
+    </form>
+    
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px dashed #ddd; font-size: 0.95rem; color: #666; text-align: left; line-height: 1.8;">
+        <p> 帳號：學號 / 密碼：預設為 123</p>
+        <p> 主管帳號：admin / 密碼：admin</p>
     </div>
 </div>
-</body>
-</html>
+{% endblock %}

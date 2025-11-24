@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="glass-card">
+    <h2 style="color: var(--btn-color);">新增員工帳號</h2>
+    <p style="text-align: center; color: #666; margin-bottom: 2rem;">密碼將預設為 <strong>123</strong></p>
+    
+    <form action="/add_user" method="post">
+        <div class="form-group">
+            <label>員工學號 / 帳號</label>
+            <input type="text" name="username" required placeholder="例如: 12156xxx">
+        </div>
+        <div class="form-group">
+            <label>員工姓名</label>
+            <input type="text" name="name" required placeholder="例如: 王小明">
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 30px;">
+            <a href="/index" class="btn btn-cancel">取消</a>
+            <button type="submit" class="btn btn-primary" style="background: var(--btn-color);">確認新增</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

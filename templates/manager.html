@@ -1,46 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>主管審核專區</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body{background:linear-gradient(135deg,#A385E2,#F2A3F2,#7E8BE8,#DCE8F4);min-height:100vh;}
-        .navbar{background:#A385E2!important;}
-    </style>
-</head>
-<body>
-<nav class="navbar navbar-dark">
-    <div class="container-fluid">
-        <span class="navbar-brand">主管審核專區 - 歡迎 {{ name }}</span>
-        <a href="/index" class="btn btn-outline-light">回首頁</a>
+{% extends "base.html" %}
+{% block content %}
+<div class="glass-card" style="border: 2px solid var(--primary);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="color: var(--primary);">假單審核清單</h2>
+        <a href="/index" class="btn btn-cancel" style="width: auto; padding: 8px 20px; margin-top: 0;">返回</a>
     </div>
-</nav>
-<div class="container mt-4">
-    {% if leaves %}
-    <table class="table table-hover bg-white shadow rounded">
-        <thead class="table-primary">
-            <tr><th>申請人</th><th>類型</th><th>開始</th><th>結束</th><th>原因</th><th>狀態</th><th>操作</th></tr>
-        </thead>
-        <tbody>
-        {% for l in leaves %}
-        <tr>
-            <td><strong>{{ l[2] }} ({{ l[1] }})</strong></td>
-            <td>{{ l[3] }}</td>
-            <td>{{ l[4] }}</td>
-            <td>{{ l[5] }}</td>
-            <td>{{ l[6] }}</td>
-            <td><span class="badge bg-warning">待審核</span></td>
-            <td>
-                <a href="/approve/{{ l[0] }}" class="btn btn-success btn-sm">核准</a>
-                <a href="/reject/{{ l[0] }}" class="btn btn-danger btn-sm">駁回</a>
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <div class="text-center mt-5 text-white fs-3">目前沒有待審核的假單</div>
-    {% endif %}
+    <div style="overflow-x: auto;">
+        <table>
+            <thead><tr><th>申請人</th><th>假別</th><th>起訖時間</th><th>事由</th><th>操作</th></tr></thead>
+            <tbody>
+                {% for leave in leaves %}
+                <tr>
+                    <td style="font-weight: bold; color: #333;">{{ leave[2] }} <br><span style="font-size:0.8rem; color:#888;">{{ leave[1] }}</span></td>
+                    <td>{{ leave[3] }}</td>
+                    <td><div style="font-size: 0.85rem;">{{ leave[4].replace('T', ' ') }}</div><div style="font-size: 0.85rem; color: #888;">至 {{ leave[5].replace('T', ' ') }}</div></td>
+                    <td style="max-width: 200px;">{{ leave[6] }}</td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <a href="/approve/{{ leave[0] }}" class="tag tag-ok" style="text-decoration: none; padding: 8px 15px;">核准</a>
+                            <a href="/reject/{{ leave[0] }}" class="tag tag-no" style="text-decoration: none; padding: 8px 15px;">駁回</a>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}<tr><td colspan="5" style="text-align: center; padding: 30px; color: #999;">目前沒有待審核的假單</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-</body>
-</html>
+{% endblock %}
